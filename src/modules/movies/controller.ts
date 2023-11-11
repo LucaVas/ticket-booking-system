@@ -1,22 +1,28 @@
-import { Router } from 'express'
-import type { Database } from '@/database'
-import { jsonRoute } from '@/utils/middleware'
-import buildRespository from './repository'
+import { Router } from 'express';
+import type { Database } from '@/database';
+import { jsonRoute } from '@/utils/middleware';
+import buildRespository from './repository';
+import BadRequest from '@/utils/errors/BadRequest';
+import { parseId } from './schema';
 
 export default (db: Database) => {
-  const messages = buildRespository(db)
-  const router = Router()
+  const messages = buildRespository(db);
+  const router = Router();
 
   router.get(
     '/',
-    jsonRoute(async () => {
-      // a hard-coded solution for your first controller test
-      const ids = [133093, 816692] // TODO: get ids from query params
-      const movies = await messages.findByIds(ids)
+    jsonRoute(async req => {
+      const stringIds = req.query.id;
 
-      return movies
+      if (stringIds && typeof stringIds === 'string') {
+        const ids = stringIds.split(',').map(id => parseId(Number(id)));
+        const movies = await messages.findByIds(ids);
+        return movies;
+      }
+
+      throw new BadRequest('Movies ids are required.');
     })
-  )
+  );
 
-  return router
-}
+  return router;
+};
