@@ -47,9 +47,28 @@ describe('GET', () => {
   it('should return a BadRequest error if id query params are not numbers', async () => {
     const { body } = await supertest(app).get('/movies?id=one,two').expect(400);
 
-    expect(body.error.issues[0].message).toBe('Movies ids must be of numeric type.');
-    expect(body.error.name).toBe(
-      'ZodError'
+    expect(body.error.issues[0].message).toBe(
+      'Movies ids must be of numeric type.'
     );
+    expect(body.error.name).toBe('ZodError');
+  });
+
+  it('should return error message if movie is not found in the database', async () => {
+    const { body } = await supertest(app).get('/movies?id=1').expect(404);
+    expect(body.error.message).toBe('No movies can be found in the database');
+  });
+
+  it('should return movies that are found in the database', async () => {
+    const { body } = await supertest(app)
+      .get('/movies?id=1,816692')
+      .expect(200);
+    expect(body).toHaveLength(1);
+    expect(body).toEqual([
+      {
+        id: 816692,
+        title: 'Interstellar',
+        year: 2014,
+      },
+    ]);
   });
 });
