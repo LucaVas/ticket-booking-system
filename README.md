@@ -34,7 +34,7 @@
 `MOVIES`
 
 ```
-/movies
+/v1/movies
 ```
 > **Method**: GET
 
@@ -62,7 +62,7 @@ Response example:
 `SCREENINGS`
 
 ```
-/screenings
+/v1/screenings
 ```
 
 > **Method**: GET
@@ -89,7 +89,7 @@ Response example:
 ```
 ---
 ```
-/screenings
+/v1/screenings
 ```
 > **Method**: POST
 
@@ -106,7 +106,7 @@ Request example:
 ```
 ---
 ```
-/screenings/:id
+/v1/screenings/:id
 ```
 > **Method**: POST
 
@@ -124,14 +124,14 @@ Request example:
 ```
 ---
 ```
-/screenings/:id
+/v1/screenings/:id
 ```
 > **Method**: DELETE
 
 > **Description**: delete a screening.
 ---
 ```
-/screenings/:id
+/v1/screenings/:id
 ```
 > **Method**: PUT
 
@@ -148,7 +148,7 @@ Request example:
 `USERS`
 
 ```
-users/:id/bookings
+/v1/users/:id/bookings
 ```
 
 > **Method**: GET
