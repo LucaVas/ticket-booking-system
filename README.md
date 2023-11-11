@@ -33,9 +33,16 @@
 
 `MOVIES`
 
-`/movies?id=`
-method: GET
-description : get movies information by id; format: /movies?id=133093,816692
+```
+/movies
+```
+> **Method**: GET
+
+> **Params**: ?id=133093,816692
+
+> **Description** : get movies information by id.
+
+Response example:
 
 ```
   [
@@ -51,10 +58,17 @@ description : get movies information by id; format: /movies?id=133093,816692
     }
   ]
 ```
+---
 `SCREENINGS`
-`/screenings`
-Method: GET
-Description :get screenings information,
+
+```
+/screenings
+```
+
+> **Method**: GET
+
+> **Description**: get screenings information.
+
 Response example:
 ```
   [
@@ -73,9 +87,13 @@ Response example:
     }
   ]
 ```
-`/screenings`
-Method: POST
-Description: create new screening.
+---
+```
+/screenings
+```
+> **Method**: POST
+
+> **Description**: create new screening.
 Request example:
 ```
   {
@@ -86,9 +104,14 @@ Request example:
   }
 
 ```
-`/screenings/:id`
-Method: POST
-Description: book tickets.
+---
+```
+/screenings/:id
+```
+> **Method**: POST
+
+> **Description**: book tickets.
+
 Request example:
 ```
   {
@@ -99,13 +122,20 @@ Request example:
   }
 
 ```
-`/screenings/:id`
-Method: DELETE
-Description: delete a screening.
+---
+```
+/screenings/:id
+```
+> **Method**: DELETE
 
-`/screenings/:id`
-Method: PUT
-Description: update screening ticket allocation.
+> **Description**: delete a screening.
+---
+```
+/screenings/:id
+```
+> **Method**: PUT
+
+> **Description**: update screening ticket allocation.
 Request example:
 
 ```
@@ -114,11 +144,17 @@ Request example:
   }
 
 ```
-
+---
 `USERS`
-`users/:id/bookings`
-Method: GET
-Description: get tickets booked by user.
+
+```
+users/:id/bookings
+```
+
+> **Method**: GET
+
+> **Description**: get tickets booked by user.
+
 Response example:
 
 ```
@@ -146,21 +182,30 @@ Response example:
 ### Tables
 
 `user`
-id | username | created_at | updated_at
+
+| id | username | created_at | updated_at
+| ----------- | ----------- | ----------- | ----------- |
+
 
 `screening`
-id | timestamp | movie_id | created_at | updated_at
+
+| id | timestamp | movie_id | created_at | updated_at
+| ----------- | ----------- | ----------- | ----------- | ----------- |
 
 `booking`
-screening_id | user_id | seat | booked_at
+
+| screening_id | user_id | seat | booked_at
+| ----------- | ----------- | ----------- | ----------- |
 
 ### Views
 
 `screening_availabiliy`
-screening_id | timestamp | total_tickets | tickets_left
+| screening_id | timestamp | total_tickets | tickets_left
+| ----------- | ----------- | ----------- | ----------- |
 
 `tickets_booked_by_user`
-user_id | username | booking_id | movie_title | timestamp | seat
+| user_id | username | booking_id | movie_title | timestamp | seat
+| ----------- | ----------- | ----------- | ----------- | ----------- | ----------- |
 
 
 ## Setup
