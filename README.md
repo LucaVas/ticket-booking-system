@@ -1,3 +1,7 @@
+# Project Title
+
+Sample REST API server for a movie ticket booking system.
+
 ## Requirements
 
 ### Technical
@@ -33,12 +37,15 @@
 
 `MOVIES`
 
-```
-/v1/movies
-```
-> **Method**: GET
+#### Get all movies
 
-> **Params**: ?id=133093,816692
+```http
+GET /api/v1/movies
+```
+
+| Parameter | Type     | Description                |
+| :-------- | :------- | :------------------------- |
+| `id`      | `string` | **Required**. Movies id    |
 
 > **Description** : get movies information by id.
 
@@ -61,13 +68,11 @@ Response example:
 ---
 `SCREENINGS`
 
-```
-/v1/screenings
+```http
+GET /api/v1/screenings
 ```
 
-> **Method**: GET
-
-> **Description**: get screenings information.
+> **Description**: get all screenings.
 
 Response example:
 ```
@@ -88,12 +93,11 @@ Response example:
   ]
 ```
 ---
+```http
+POST /api/v1/screenings
 ```
-/v1/screenings
-```
-> **Method**: POST
-
 > **Description**: create new screening.
+
 Request example:
 ```
   {
@@ -105,12 +109,10 @@ Request example:
 
 ```
 ---
+```http
+POST /api/v1/screenings/:id
 ```
-/v1/screenings/:id
-```
-> **Method**: POST
-
-> **Description**: book tickets.
+> **Description**: book tickets for a screening.
 
 Request example:
 ```
@@ -123,19 +125,17 @@ Request example:
 
 ```
 ---
+```http
+DELETE /api/v1/screenings/:id
 ```
-/v1/screenings/:id
-```
-> **Method**: DELETE
-
 > **Description**: delete a screening.
 ---
+```http
+PUT /api/v1/screenings/:id
 ```
-/v1/screenings/:id
-```
-> **Method**: PUT
 
 > **Description**: update screening ticket allocation.
+
 Request example:
 
 ```
@@ -147,11 +147,9 @@ Request example:
 ---
 `USERS`
 
+```http
+GET /api/v1/users/:id/bookings
 ```
-/v1/users/:id/bookings
-```
-
-> **Method**: GET
 
 > **Description**: get tickets booked by user.
 
@@ -162,7 +160,7 @@ Response example:
     id: 1,
     username: 'lucavassos',
     bookings: [
-      {
+      { 
         id: 1,
         timestamp: '2023-11-06T21:15:00.0000Z',
         movieTitle: 'Pirate of Caribbean',
@@ -245,3 +243,11 @@ If you make changes to the database schema, you will need to update the types. Y
 ```bash
 npm run generate-types
 ```
+
+## Authors
+
+- [@LucaVas](https://github.com/LucaVas)
+
+## Acknowledgements
+
+ - [Turing College](https://www.turingcollege.com/)
