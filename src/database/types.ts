@@ -37,7 +37,7 @@ export interface Ratings {
 
 export interface Screenings {
   id: Generated<number>;
-  timestamp: string | null;
+  timestamp: string;
   movieId: number;
   createdAt: string | null;
   updatedAt: string | null;

@@ -1,14 +1,8 @@
 import type { Database } from '@/database';
-import { Users } from '../../database/types';
-import {
-  UserRowSelect,
-  BookingRow,
-  BookingRowSelect,
-  BookingInformation,
-} from './types/types';
+import { UserRowSelect, Ticket } from './types/types';
 
 export default (db: Database) => ({
-  async getTicketsByUserId(userId: number): Promise<BookingInformation[]> {
+  async getTicketsByUserId(userId: number): Promise<Ticket[]> {
     return db
       .selectFrom('bookings')
       .innerJoin('users', 'users.id', 'bookings.userId')
@@ -27,9 +21,7 @@ export default (db: Database) => ({
       .execute();
   },
 
-  async getUserById(
-    userId: number
-  ): Promise<UserRowSelect | undefined> {
+  async getUserById(userId: number): Promise<UserRowSelect | undefined> {
     return db
       .selectFrom('users')
       .where('id', '=', userId)

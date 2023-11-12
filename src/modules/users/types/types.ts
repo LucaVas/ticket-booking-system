@@ -7,6 +7,16 @@ export type UserRowInsert = Insertable<UserRowWithoutId>;
 export type UserRowUpdate = Updateable<UserRowWithoutId>;
 export type UserRowSelect = Selectable<UserRow>;
 
+export type Ticket = {
+  username: string,
+  screeningId: number,
+  timestamp: string,
+  movieTitle: string,
+  row: string,
+  seat: number,
+  bookedAt: string
+};
+
 export type SeatInformation = { row: string; seat: number; bookedAt: string };
 export type Booking = {
   screeningId: number;
@@ -16,4 +26,8 @@ export type Booking = {
     totalNumber: number;
     seats: SeatInformation[];
   };
+};
+export type BookingList = {
+  username: string;
+  bookings: Booking[];
 };

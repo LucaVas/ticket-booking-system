@@ -2,13 +2,12 @@ import { Database } from '@/database';
 import buildRepository from './repository';
 import NotFound from '@/utils/errors/NotFound';
 import BadRequest from '@/utils/errors/BadRequest';
-import { Booking } from './types/types';
-
+import { Booking, BookingList, Ticket } from './types/types';
 
 export default (db: Database) => ({
   repository: buildRepository(db),
 
-  async getTicketsByUserId(userId: number): Promise<Booking> {
+  async getTicketsByUserId(userId: number): Promise<BookingList> {
     const id = validateId(userId);
 
     const user = await this.repository.getUserById(id);
@@ -19,87 +18,47 @@ export default (db: Database) => ({
 
     const bookings: Booking[] = [];
 
-    tickets.forEach(ticket => {
-      const existingBooking = bookings.find(
-        booking => booking.movieTitle === ticket.movieTitle
-      );
+    addScreenings(bookings, tickets);
 
-      if (existingBooking) {
-        // Update existing booking
-        existingBooking.ticketsBooked.totalNumber++;
-        existingBooking.ticketsBooked.seats.push({
+    addSeats(bookings, tickets);
+
+    return {
+      username: user.username,
+      bookings: bookings,
+    };
+  },
+});
+
+const addScreenings = (bookings: Booking[], tickets: Ticket[]): void => {
+  tickets.filter(ticket => {
+    if (!bookings.some(el => el.movieTitle === ticket.movieTitle)) {
+      bookings.push({
+        screeningId: ticket.screeningId,
+        movieTitle: ticket.movieTitle,
+        timestamp: ticket.timestamp,
+        ticketsBooked: {
+          totalNumber: 0,
+          seats: [],
+        },
+      });
+    }
+  });
+};
+
+const addSeats = (bookings: Booking[], tickets: Ticket[]): void => {
+  bookings.forEach(booking => {
+    tickets.forEach(ticket => {
+      if (ticket.screeningId === booking.screeningId) {
+        booking.ticketsBooked.totalNumber++;
+        booking.ticketsBooked.seats.push({
           row: ticket.row,
           seat: ticket.seat,
           bookedAt: ticket.bookedAt,
         });
-      } else {
-        // Create a new booking
-        const newBooking: Booking = {
-          screeningId: ticket.screeningId,
-          movieTitle: ticket.movieTitle,
-          timestamp: ticket.timestamp,
-          ticketsBooked: {
-            totalNumber: 1,
-            seats: [
-              {
-                row: ticket.row,
-                seat: ticket.seat,
-                bookedAt: ticket.bookedAt,
-              },
-            ],
-          },
-        };
-
-        bookings.push(newBooking);
       }
     });
-
-    return bookings;
-
-    // const response = {
-    //   username: user.username,
-    //   bookings: [] as Booking[],
-    // };
-
-    // tickets.filter(ticket => {
-    //   if (!response.bookings.some(el => el.movieTitle === ticket.movieTitle)) {
-    //     response.bookings.push({
-    //       screeningId: ticket.screeningId,
-    //       movieTitle: ticket.movieTitle,
-    //       timestamp: ticket.timestamp,
-    //       ticketsBooked: {
-    //         totalNumber: 0,
-    //         seats: [],
-    //       },
-    //     });
-    //   }
-    // });
-
-    // // add number of tickets per booking
-    // response.bookings.forEach(booking => {
-    //   tickets.forEach(ticket => {
-    //     if (ticket.screeningId === booking.screeningId) {
-    //       booking.ticketsBooked.totalNumber++;
-    //     }
-    //   });
-    // });
-
-    // // add tickets seats
-    // response.bookings.forEach(booking => {
-    //   tickets.forEach(ticket => {
-    //     if (ticket.screeningId === booking.screeningId) {
-    //       booking.ticketsBooked.seats.push({
-    //         row: ticket.row,
-    //         seat: ticket.seat,
-    //         bookedAt: ticket.bookedAt,
-    //       });
-    //     }
-    //   });
-    // });
-
-    // return response;
-  },
-});
+  });
+};
 
 const validateId = (userId: number): number => {
   if (!Number.isInteger(userId)) {
