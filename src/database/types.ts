@@ -7,7 +7,8 @@ export type Generated<T> = T extends ColumnType<infer S, infer I, infer U>
 export interface Bookings {
   screeningId: number;
   userId: number;
-  seat: string;
+  row: string;
+  seat: number;
   bookedAt: string;
 }
 
@@ -36,7 +37,7 @@ export interface Ratings {
 
 export interface Screenings {
   id: Generated<number>;
-  timestamp: string | null;
+  timestamp: string;
   movieId: number;
   createdAt: string | null;
   updatedAt: string | null;
