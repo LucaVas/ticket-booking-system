@@ -13,6 +13,14 @@ const app = createApp(db);
 const createScreenings = createFor(db, 'screenings');
 const createMovies = createFor(db, 'movies');
 
+afterAll(() => db.destroy());
+
+afterEach(async () => {
+  // clearing the tested table after each test
+  await db.deleteFrom('movies').execute();
+  await db.deleteFrom('screenings').execute();
+});
+
 describe('GET', () => {
   it('should return all screenings', async () => {
     const movieTest = [
