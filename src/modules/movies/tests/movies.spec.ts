@@ -47,10 +47,9 @@ describe('GET', () => {
   it('should return a BadRequest error if id query params are not numbers', async () => {
     const { body } = await supertest(app).get('/movies?id=one,two').expect(400);
 
-    expect(body.error.issues[0].message).toBe(
+    expect(body.error.message).toBe(
       'Movies ids must be of numeric type.'
     );
-    expect(body.error.name).toBe('ZodError');
   });
 
   it('should return error message if movie is not found in the database', async () => {
