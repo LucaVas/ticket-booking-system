@@ -1,30 +1,32 @@
 import { Router } from 'express';
-// import type { Database } from '@/database';
-// import { jsonRoute } from '@/utils/middleware';
-// import buildRespository from './repository';
-// import BadRequest from '@/utils/errors/BadRequest';
-// import NotFound from '@/utils/errors/NotFound';
-// import { parseId } from './schema';
+import type { Database } from '@/database';
+import { jsonRoute } from '@/utils/middleware';
+import buildRepository from './repository';
+import BadRequest from '@/utils/errors/BadRequest';
+import NotFound from '@/utils/errors/NotFound';
 
-// export default (db: Database) => {
-//   const messages = buildRespository(db);
-//   const router = Router();
+export default (db: Database) => {
+  const repository = buildRepository(db);
+  const router = Router();
 
-//   router.get(
-//     '/',
-//     jsonRoute(async req => {
-//       const stringIds = req.query.id;
+  router.delete(
+    '/:id',
+    jsonRoute(async req => {
+      const screeningId = parseInt(req.params.id);
 
-//       if (stringIds && typeof stringIds === 'string') {
-//         const ids = stringIds.split(',').map(id => parseId(Number(id)));
-//         const movies = await messages.findByIds(ids);
-//         if (movies.length === 0)
-//           throw new NotFound('No movies can be found in the database');
-//         return movies;
-//       }
-//       throw new BadRequest('Movies ids are required.');
-//     })
-//   );
+      if (!Number.isInteger(screeningId)) {
+        throw new BadRequest('Please provide a numeric screening ID.');
+      }
 
-//   return router;
-// };
+      const deletedScreening =
+        await repository.deleteScreeningById(screeningId);
+
+      if (!deletedScreening)
+        throw new NotFound(`Screening with id ${screeningId} cannot be found.`);
+
+      return deletedScreening;
+    })
+  );
+
+  return router;
+};
