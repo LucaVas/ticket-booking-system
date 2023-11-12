@@ -81,17 +81,22 @@ Response example:
 ```
   [
     {
+      id: 1,
+      timestamp: '2023-11-06T21:15:00.0000Z',
+      totalTickets: 100,
+      ticketsLeft: 27
       movieId: 133093,
       movieTitle: 'Pirates of Caribbean',
       movieYear: 2010,
-      screenings: [
-        {
-          id: 1,
-          timestamp: '2023-11-06T21:15:00.0000Z',
-          totalTickets: 100,
-          ticketsLeft: 27
-        }
-      ]
+    },
+    {
+      id: 2,
+      timestamp: '2023-11-06T19:30:00.0000Z',
+      totalTickets: 100,
+      ticketsLeft: 15
+      movieId: 22,
+      movieTitle: 'Sherlock Holmes',
+      movieYear: 2012,
     }
   ]
 ```
@@ -226,18 +231,9 @@ Response example:
 
 `booking`
 
-| screening_id | user_id | seat | booked_at |
-| ------------ | ------- | ---- | --------- |
+| screening_id | user_id | row | seat | booked_at |
+| ------------ | ------- | --- | ---- | --------- |
 
-### Views
-
-`screening_availabiliy`
-| screening_id | timestamp | total_tickets | tickets_left
-| ----------- | ----------- | ----------- | ----------- |
-
-`tickets_booked_by_user`
-| user_id | username | booking_id | movie_title | timestamp | seat
-| ----------- | ----------- | ----------- | ----------- | ----------- | ----------- |
 
 ## Setup
 
