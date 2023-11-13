@@ -106,4 +106,31 @@ describe('findAll', () => {
 
     expect(screening).toEqual(screeningTest);
   });
+
+  it('should delete a screening', async () => {
+    const timestamp = new Date().toISOString();
+
+    const movieTest = [
+      {
+        id: 816692,
+        title: 'Interstellar',
+        year: 2014,
+      },
+    ];
+
+    const screeningTest = {
+      id: 1,
+      timestamp: '2023-11-01T21:15:00.0000Z',
+      movieId: 816692,
+      createdAt: timestamp,
+      updatedAt: timestamp,
+    };
+
+    await createMovies(movieTest);
+    await createScreenings(screeningTest);
+
+    const screening = await repository.deleteScreeningById(1);
+
+    expect(screening).toEqual(screeningTest);
+  });
 });

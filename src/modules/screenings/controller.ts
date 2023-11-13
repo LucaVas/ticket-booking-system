@@ -30,5 +30,3 @@ export default (db: Database) => {
 
   return router;
 };
-
-
