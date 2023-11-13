@@ -7,6 +7,8 @@ const repository = buildRepository(db);
 
 const createScreenings = createFor(db, 'screenings');
 const createMovies = createFor(db, 'movies');
+const createBookings = createFor(db, 'bookings');
+const createUsers = createFor(db, 'users');
 
 afterAll(() => db.destroy());
 
@@ -31,13 +33,31 @@ describe('findAll', () => {
       {
         timestamp: '2023-11-01T21:15:00.0000Z',
         movieId: 816692,
+        totalTickets: 100,
         createdAt: timestamp,
         updatedAt: timestamp,
       },
     ];
 
+    const bookingTest = [
+      {
+        screeningId: 1,
+        userId: 1,
+        seat: 'F4',
+        bookedAt: '2023-11-01T21:15:00.0000Z',
+      },
+    ];
+
+    const userTest = [
+      {
+        username: 'lucavassos',
+      },
+    ];
+
     await createMovies(movieTest);
     await createScreenings(screeningTest);
+    await createUsers(userTest);
+    await createBookings(bookingTest);
 
     // ACT
     const screenings = await repository.findAll();
@@ -47,6 +67,16 @@ describe('findAll', () => {
 
     // ASSERT
     expect(screenings).toHaveLength(1);
-    expect(screenings).toEqual(screeningTest);
+    expect(screenings).toEqual([
+      {
+        id: 1,
+        timestamp: '2023-11-01T21:15:00.0000Z',
+        movieId: 816692,
+        totalTickets: 100,
+        createdAt: timestamp,
+        updatedAt: timestamp,
+      },
+    ]);
+    repository.getScreenings();
   });
 });
