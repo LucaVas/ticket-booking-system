@@ -37,9 +37,14 @@ export default (db: Database) => ({
   async createScreening(
     screening: ScreeningRowInsert
   ): Promise<ScreeningRowSelect> {
+    const timestamp = new Date().toISOString();
     return db
       .insertInto('screenings')
-      .values(screening)
+      .values({
+        ...screening,
+        createdAt: timestamp,
+        updatedAt: timestamp,
+      })
       .returningAll()
       .executeTakeFirstOrThrow();
   },
