@@ -1,32 +1,38 @@
 import { Router } from 'express';
 import type { Database } from '@/database';
 import { jsonRoute } from '@/utils/middleware';
-import buildRepository from './repository';
-import BadRequest from '@/utils/errors/BadRequest';
-import NotFound from '@/utils/errors/NotFound';
+import buildService from './service';
+import { parsePostRecord, parsePutRecord } from './schema';
+import { StatusCodes } from 'http-status-codes';
 
 export default (db: Database) => {
-  const repository = buildRepository(db);
+  const service = buildService(db);
   const router = Router();
 
-  router.delete(
-    '/:id',
+  router.post(
+    '/',
     jsonRoute(async req => {
-      const screeningId = parseInt(req.params.id);
-
-      if (!Number.isInteger(screeningId)) {
-        throw new BadRequest('Please provide a numeric screening ID.');
-      }
-
-      const deletedScreening =
-        await repository.deleteScreeningById(screeningId);
-
-      if (!deletedScreening)
-        throw new NotFound(`Screening with id ${screeningId} cannot be found.`);
-
-      return deletedScreening;
-    })
+      const newScreening = parsePostRecord(req.body);
+      return service.createScreening(newScreening);
+    }, StatusCodes.CREATED)
   );
+
+  router
+    .put(
+      '/:id',
+      jsonRoute(async req => {
+        const screeningId = parseInt(req.params.id);
+        const { totalTickets } = parsePutRecord(req.body);
+        return service.updateScreeningById(screeningId, totalTickets);
+      })
+    )
+    .delete(
+      '/:id',
+      jsonRoute(async req => {
+        const screeningId = parseInt(req.params.id);
+        return service.deleteScreeningById(screeningId);
+      })
+    );
 
   return router;
 };

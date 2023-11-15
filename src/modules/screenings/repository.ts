@@ -1,7 +1,5 @@
 import type { Database } from '@/database';
-import { bigint } from 'zod';
-import { ScreeningRowSelect } from './types/types';
-//import type { Screenings } from '@/database'
+import { ScreeningRowSelect, ScreeningRowInsert } from './types/types';
 
 export default (db: Database) => ({
   findAll: async (limit = 10, offset = 0) =>
@@ -12,9 +10,9 @@ export default (db: Database) => ({
       .offset(offset)
       .execute(),
 
-  deleteScreeningById: async (
+  async deleteScreeningById(
     id: number
-  ): Promise<ScreeningRowSelect | undefined> => {
+  ): Promise<ScreeningRowSelect | undefined> {
     return db
       .deleteFrom('screenings')
       .where('screenings.id', '=', id)
@@ -22,6 +20,27 @@ export default (db: Database) => ({
       .executeTakeFirst();
   },
 
-  //   // findByIds: async (ids: number[]) =>
-  //   //   db.selectFrom('screenings').selectAll().where('id', 'in', ids).execute(),
+  async updateScreeningById(
+    id: number,
+    totalTickets: number
+  ): Promise<ScreeningRowSelect | undefined> {
+    return db
+      .updateTable('screenings')
+      .set({
+        totalTickets,
+      })
+      .where('screenings.id', '=', id)
+      .returningAll()
+      .executeTakeFirst();
+  },
+
+  async createScreening(
+    screening: ScreeningRowInsert
+  ): Promise<ScreeningRowSelect> {
+    return db
+      .insertInto('screenings')
+      .values(screening)
+      .returningAll()
+      .executeTakeFirstOrThrow();
+  },
 });

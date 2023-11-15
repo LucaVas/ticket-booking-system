@@ -38,6 +38,7 @@ export interface Screenings {
   id: Generated<number>;
   timestamp: string | null;
   movieId: number;
+  totalTickets: number | null;
   createdAt: string | null;
   updatedAt: string | null;
 }
