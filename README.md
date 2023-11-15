@@ -226,8 +226,8 @@ Response example:
 
 `screening`
 
-| id  | timestamp | movie_id | created_at | updated_at |
-| --- | --------- | -------- | ---------- | ---------- |
+| id  | timestamp | movie_id | total_tickets | created_at | updated_at |
+| --- | --------- | -------- | ------------- | ---------- | ---------- |
 
 `booking`
 
