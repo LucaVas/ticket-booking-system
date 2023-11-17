@@ -7,8 +7,8 @@ const repository = buildRepository(db);
 
 const createScreenings = createFor(db, 'screenings');
 const createMovies = createFor(db, 'movies');
-const createBookings = createFor(db, 'bookings');
 const createUsers = createFor(db, 'users');
+const createBookings = createFor(db, 'bookings');
 
 afterAll(() => db.destroy());
 
@@ -17,8 +17,9 @@ afterEach(async () => {
   await db.deleteFrom('screenings').execute();
 });
 
-describe('findAll', () => {
-  it('should return a list of screenings in the database', async () => {
+describe('Screenings', () => {
+
+  it('should return all screenings in the database joined with movies', async () => {
     const movieTest = [
       {
         id: 816692,
@@ -27,6 +28,46 @@ describe('findAll', () => {
       },
     ];
     const timestamp = new Date().toISOString();
+    const screeningTest = [
+      {
+        id: 1,
+        timestamp: '2023-11-01T21:15:00.0000Z',
+        movieId: 816692,
+        totalTickets: null,
+        createdAt: timestamp,
+        updatedAt: timestamp,
+      },
+    ];
+
+    await createMovies(movieTest);
+    await createScreenings(screeningTest);
+
+    const screenings = await repository.getScreeningAndMovie();
+
+    expect(screenings).toHaveLength(1);
+    expect(screenings).toEqual([
+      {
+        id: 1,
+        timestamp: '2023-11-01T21:15:00.0000Z',
+        totalTickets: null,
+        movieId: 816692,
+        movieTitle: 'Interstellar',
+        movieYear: 2014,
+      },
+    ]);
+  });
+
+  it('should return number of bookings for the screening', async () => {
+    const timestamp = new Date().toISOString();
+
+    const movieTest = [
+      {
+        id: 816692,
+        title: 'Interstellar',
+        year: 2014,
+      },
+    ];
+
     const screeningTest = [
       {
         id: 1,
@@ -52,26 +93,17 @@ describe('findAll', () => {
         username: 'lucavassos',
       },
     ];
-
     await createMovies(movieTest);
     await createScreenings(screeningTest);
     await createUsers(userTest);
     await createBookings(bookingTest);
 
-    const screenings = await repository.findAll();
+    const screenings = await repository.getScreeningAndMovie();
+    const bookingsNumber = await repository.getBookingsNumber(screenings[0].id);
 
-    expect(screenings).toHaveLength(1);
-    expect(screenings).toEqual([
-      {
-        id: 1,
-        timestamp: '2023-11-01T21:15:00.0000Z',
-        movieId: 816692,
-        totalTickets: 100,
-        createdAt: timestamp,
-        updatedAt: timestamp,
-      },
-    ]);
-    repository.getScreenings();
+    console.log(bookingsNumber);
+
+    expect(bookingsNumber).toBe(1);
   });
 
   it('should delete a screening', async () => {
@@ -89,6 +121,7 @@ describe('findAll', () => {
       id: 1,
       timestamp: '2023-11-01T21:15:00.0000Z',
       movieId: 816692,
+      totalTickets: null,
       createdAt: timestamp,
       updatedAt: timestamp,
     };
@@ -152,12 +185,11 @@ describe('findAll', () => {
     await createMovies(movieTest);
     await createScreenings(screeningTest);
 
-    const screening =
-      await repository.updateScreeningById(1, 15);
+    const screening = await repository.updateScreeningById(1, 15);
 
     expect(screening).toEqual({
       ...screeningTest,
-      totalTickets: 15
+      totalTickets: 15,
     });
   });
 

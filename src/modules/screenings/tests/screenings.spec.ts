@@ -289,7 +289,8 @@ describe('/screenings', () => {
   });
 
   describe('GET', () => {
-    it.todo('should return all screenings', async () => {
+    it('should return all screenings', async () => {
+      const timestamp = new Date().toISOString();
       const movieTest = [
         {
           id: 816692,
@@ -297,13 +298,14 @@ describe('/screenings', () => {
           year: 2014,
         },
       ];
-      const timestamp = new Date().toISOString();
       const screeningTest = [
         {
-          timestamp: '2023-11-01T21:15:00.0000Z',
+          id: 1,
+          timestamp: timestamp,
           movieId: 816692,
           createdAt: timestamp,
           updatedAt: timestamp,
+          totalTickets: null,
         },
       ];
 
@@ -311,20 +313,15 @@ describe('/screenings', () => {
       await createScreenings(screeningTest);
 
       const { body } = await supertest(app).get('/screenings').expect(200);
-
       expect(body).toEqual([
         {
+          id: 1,
+          timestamp: timestamp,
+          totalTickets: null,
+          ticketsLeft: null,
           movieId: 816692,
           movieTitle: 'Interstellar',
           movieYear: 2014,
-          screenings: [
-            {
-              id: 1,
-              timestamp: '2023-11-06T21:15:00.0000Z',
-              totalTickets: 100,
-              ticketsLeft: 100,
-            },
-          ],
         },
       ]);
     });

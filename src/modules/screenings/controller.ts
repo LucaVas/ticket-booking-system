@@ -9,6 +9,19 @@ export default (db: Database) => {
   const service = buildService(db);
   const router = Router();
 
+  router.get(
+    '/',
+    jsonRoute(async () => {
+      const screeningsAndMovies = await service.getScreeningsAndMovies();
+      const modifiedScreenings = await Promise.all(
+        screeningsAndMovies.map(
+          async screening => await service.addTicketsLeft(screening)
+        )
+      );
+      return modifiedScreenings;
+    })
+  );
+
   router.post(
     '/',
     jsonRoute(async req => {
