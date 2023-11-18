@@ -43,9 +43,9 @@ Sample REST API server for a movie ticket booking system.
 GET /api/v1/movies
 ```
 
-| Parameter | Type     | Description                |
-| :-------- | :------- | :------------------------- |
-| `id`      | `string` | **Required**. Movies id    |
+| Parameter | Type     | Description             |
+| :-------- | :------- | :---------------------- |
+| `id`      | `string` | **Required**. Movies id |
 
 > **Description** : get movies information by id.
 
@@ -65,7 +65,9 @@ Response example:
     }
   ]
 ```
+
 ---
+
 `SCREENINGS`
 
 ```http
@@ -75,30 +77,40 @@ GET /api/v1/screenings
 > **Description**: get all screenings.
 
 Response example:
+
 ```
   [
     {
+      id: 1,
+      timestamp: '2023-11-06T21:15:00.0000Z',
+      totalTickets: 100,
+      ticketsLeft: 27
       movieId: 133093,
       movieTitle: 'Pirates of Caribbean',
       movieYear: 2010,
-      screenings: [
-        {
-          id: 1,
-          timestamp: '2023-11-06T21:15:00.0000Z',
-          totalTickets: 100,
-          ticketsLeft: 27
-        }
-      ]
+    },
+    {
+      id: 2,
+      timestamp: '2023-11-06T19:30:00.0000Z',
+      totalTickets: 100,
+      ticketsLeft: 15
+      movieId: 22,
+      movieTitle: 'Sherlock Holmes',
+      movieYear: 2012,
     }
   ]
 ```
+
 ---
+
 ```http
 POST /api/v1/screenings
 ```
+
 > **Description**: create new screening.
 
 Request example:
+
 ```
   {
     date: '2023-11-06',
@@ -108,28 +120,45 @@ Request example:
   }
 
 ```
+
 ---
+
 ```http
 POST /api/v1/screenings/:id
 ```
+
 > **Description**: book tickets for a screening.
 
 Request example:
+
 ```
   {
     username: 'lucavassos',
-    bookingId: 5,
-    ticketsQuantity: 3,
-    seat: 'F7'
+    ticketsQuantity: 2,
+    seats: [
+      {
+        row: 'F',
+        seat: 7
+      },
+      {
+        row: 'F',
+        seat: 8
+      },
+    ]
   }
 
 ```
+
 ---
+
 ```http
 DELETE /api/v1/screenings/:id
 ```
+
 > **Description**: delete a screening.
+
 ---
+
 ```http
 PUT /api/v1/screenings/:id
 ```
@@ -144,7 +173,9 @@ Request example:
   }
 
 ```
+
 ---
+
 `USERS`
 
 ```http
@@ -160,14 +191,23 @@ Response example:
     id: 1,
     username: 'lucavassos',
     bookings: [
-      { 
+      {
         id: 1,
         timestamp: '2023-11-06T21:15:00.0000Z',
         movieTitle: 'Pirate of Caribbean',
         ticketsBooked:
           {
-            totalNumber: 3,
-            seats: [F7, F8, F9]
+            totalNumber: 2,
+            seats: [
+              {
+                row: 'F',
+                seat: 7
+              },
+              {
+                row: 'F',
+                seat: 8
+              },
+            ]
           }
       }
     ]
@@ -181,29 +221,18 @@ Response example:
 
 `user`
 
-| id | username | created_at | updated_at
-| ----------- | ----------- | ----------- | ----------- |
-
+| id  | username | created_at | updated_at |
+| --- | -------- | ---------- | ---------- |
 
 `screening`
 
-| id | timestamp | movie_id | created_at | updated_at
-| ----------- | ----------- | ----------- | ----------- | ----------- |
+| id  | timestamp | movie_id | total_tickets | created_at | updated_at |
+| --- | --------- | -------- | ------------- | ---------- | ---------- |
 
 `booking`
 
-| screening_id | user_id | seat | booked_at
-| ----------- | ----------- | ----------- | ----------- |
-
-### Views
-
-`screening_availabiliy`
-| screening_id | timestamp | total_tickets | tickets_left
-| ----------- | ----------- | ----------- | ----------- |
-
-`tickets_booked_by_user`
-| user_id | username | booking_id | movie_title | timestamp | seat
-| ----------- | ----------- | ----------- | ----------- | ----------- | ----------- |
+| screening_id | user_id | row | seat | booked_at |
+| ------------ | ------- | --- | ---- | --------- |
 
 
 ## Setup
@@ -250,4 +279,4 @@ npm run generate-types
 
 ## Acknowledgements
 
- - [Turing College](https://www.turingcollege.com/)
+- [Turing College](https://www.turingcollege.com/)

@@ -10,7 +10,8 @@ export async function up(db: Kysely<SqliteDatabase>) {
     .addColumn('user_id', 'integer', c =>
       c.references('users.id').onDelete('cascade').notNull()
     )
-    .addColumn('seat', 'text', c => c.notNull())
+    .addColumn('row', 'text', c => c.notNull())
+    .addColumn('seat', 'integer', c => c.notNull())
     .addColumn('booked_at', 'text', c => c.notNull())
     .execute();
 }
