@@ -12,9 +12,9 @@ export default function createApp(db: Database) {
   app.use(express.json());
 
   // register your controllers here
-  app.use('/movies', movies(db));
-  app.use('/users', users(db));
-  app.use('/screenings', screenings(db));
+  app.use('/api/v1/movies', movies(db));
+  app.use('/api/v1/users', users(db));
+  app.use('/api/v1/screenings', screenings(db));
 
   app.use(jsonErrorHandler);
 

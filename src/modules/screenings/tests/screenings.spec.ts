@@ -7,12 +7,14 @@ const db = await createTestDatabase();
 const app = createApp(db);
 const createScreenings = createFor(db, 'screenings');
 const createMovies = createFor(db, 'movies');
+const createUsers = createFor(db, 'users');
 
 afterAll(() => db.destroy());
 
 afterEach(async () => {
   await db.deleteFrom('movies').execute();
   await db.deleteFrom('screenings').execute();
+  await db.deleteFrom('users').execute();
 });
 
 describe('/screenings/:id', () => {
@@ -38,14 +40,18 @@ describe('/screenings/:id', () => {
       await createMovies(movieTest);
       await createScreenings(screeningTest);
 
-      const { body } = await supertest(app).delete('/screenings/1').expect(200);
+      const { body } = await supertest(app)
+        .delete('/api/v1/screenings/1')
+        .expect(200);
 
       expect(body.movieId).toEqual(816692);
       expect(body.time).toEqual('21:15');
     });
 
     it('should return 404 if screening to delete is not found', async () => {
-      const { body } = await supertest(app).delete('/screenings/5').expect(404);
+      const { body } = await supertest(app)
+        .delete('/api/v1/screenings/5')
+        .expect(404);
 
       expect(body.error.message).toEqual(
         'Screening with ID 5 cannot be found.'
@@ -54,7 +60,7 @@ describe('/screenings/:id', () => {
 
     it('should return 400 if id is invalid', async () => {
       const { body } = await supertest(app)
-        .delete('/screenings/one')
+        .delete('/api/v1/screenings/one')
         .expect(400);
 
       expect(body.error.message).toEqual(
@@ -90,7 +96,7 @@ describe('/screenings/:id', () => {
       await createScreenings(screeningTest);
 
       const { body } = await supertest(app)
-        .put('/screenings/1')
+        .put('/api/v1/screenings/1')
         .send(ticketsChangeRequest)
         .expect(200);
 
@@ -124,7 +130,7 @@ describe('/screenings/:id', () => {
       await createScreenings(screeningTest);
 
       const { body } = await supertest(app)
-        .put('/screenings/1')
+        .put('/api/v1/screenings/1')
         .send(ticketsChangeRequest)
         .expect(200);
 
@@ -158,7 +164,7 @@ describe('/screenings/:id', () => {
       await createScreenings(screeningTest);
 
       const { body } = await supertest(app)
-        .put('/screenings/1')
+        .put('/api/v1/screenings/1')
         .send(ticketsChangeRequest)
         .expect(400);
 
@@ -193,7 +199,7 @@ describe('/screenings/:id', () => {
       await createScreenings(screeningTest);
 
       const { body } = await supertest(app)
-        .put('/screenings/one')
+        .put('/api/v1/screenings/one')
         .send(ticketsChangeRequest)
         .expect(400);
 
@@ -206,7 +212,7 @@ describe('/screenings/:id', () => {
       };
 
       const { body } = await supertest(app)
-        .put('/screenings/10')
+        .put('/api/v1/screenings/10')
         .send(ticketsChangeRequest)
         .expect(404);
 
@@ -236,7 +242,7 @@ describe('/screenings', () => {
       await createMovies(movieTest);
 
       const { body } = await supertest(app)
-        .post('/screenings')
+        .post('/api/v1/screenings')
         .send(screeningTest)
         .expect(201);
 
@@ -260,7 +266,7 @@ describe('/screenings', () => {
       await createMovies(movieTest);
 
       const { body } = await supertest(app)
-        .post('/screenings')
+        .post('/api/v1/screenings')
         .send(screeningTest)
         .expect(400);
 
@@ -286,13 +292,155 @@ describe('/screenings', () => {
       await createMovies(movieTest);
 
       const { body } = await supertest(app)
-        .post('/screenings')
+        .post('/api/v1/screenings')
         .send(screeningTest)
         .expect(400);
 
       expect(body.error.issues[0].message).toBe(
         'Time format is incorrect, required: hh:MM'
       );
+    });
+
+    it('should book tickets for screening', async () => {
+      const movieTest = [
+        {
+          id: 816692,
+          title: 'Interstellar',
+          year: 2014,
+        },
+      ];
+
+      const screeningTest = {
+        id: 1,
+        date: '2023-11-01',
+        time: '21:15',
+        movieId: 816692,
+        totalTickets: 107,
+      };
+
+      const bookingTest = {
+        username: 'lucavassos',
+        ticketsQuantity: 2,
+        seats: [
+          {
+            row: 'F',
+            seat: 7,
+          },
+          {
+            row: 'F',
+            seat: 8,
+          },
+        ],
+      };
+
+      const userTest = {
+        username: 'lucavassos',
+      };
+
+      await createMovies(movieTest);
+      await createScreenings(screeningTest);
+      await createUsers(userTest);
+
+      const { body } = await supertest(app)
+        .post('/api/v1/screenings/1')
+        .send(bookingTest)
+        .expect(201);
+
+      expect(body.length).toBe(2);
+      expect(body[0].screeningId).toBe(1);
+      expect(body[0].seat).toBe(7);
+      expect(body[1].seat).toBe(8);
+    });
+
+    it('should throw error if user is not found', async () => {
+      const movieTest = [
+        {
+          id: 816692,
+          title: 'Interstellar',
+          year: 2014,
+        },
+      ];
+
+      const screeningTest = {
+        id: 1,
+        date: '2023-11-01',
+        time: '21:15',
+        movieId: 816692,
+        totalTickets: 107,
+      };
+
+      const bookingTest = {
+        username: 'napoleon',
+        ticketsQuantity: 2,
+        seats: [
+          {
+            row: 'F',
+            seat: 7,
+          },
+          {
+            row: 'F',
+            seat: 8,
+          },
+        ],
+      };
+
+      await createMovies(movieTest);
+      await createScreenings(screeningTest);
+
+      const { body } = await supertest(app)
+        .post('/api/v1/screenings/1')
+        .send(bookingTest)
+        .expect(404);
+
+      expect(body.error.message).toBe('User with username napoleon not found.');
+    });
+
+    it('should throw error if screening is not found', async () => {
+      const movieTest = [
+        {
+          id: 816692,
+          title: 'Interstellar',
+          year: 2014,
+        },
+      ];
+
+      const screeningTest = {
+        id: 1,
+        date: '2023-11-01',
+        time: '21:15',
+        movieId: 816692,
+        totalTickets: 107,
+      };
+
+      const bookingTest = {
+        username: 'lucavassos',
+        ticketsQuantity: 2,
+        seats: [
+          {
+            row: 'F',
+            seat: 7,
+          },
+          {
+            row: 'F',
+            seat: 8,
+          },
+        ],
+      };
+
+      const userTest = {
+        username: 'lucavassos',
+      };
+
+      await createMovies(movieTest);
+      await createScreenings(screeningTest);
+      await createUsers(userTest);
+
+      const { body } = await supertest(app)
+        .post('/api/v1/screenings/2')
+        .send(bookingTest)
+        .expect(404);
+
+      expect(body.error.message).toBe('Screening with ID 2 not found.');
     });
   });
 
@@ -321,7 +469,9 @@ describe('/screenings', () => {
       await createMovies(movieTest);
       await createScreenings(screeningTest);
 
-      const { body } = await supertest(app).get('/screenings').expect(200);
+      const { body } = await supertest(app)
+        .get('/api/v1/screenings')
+        .expect(200);
       expect(body).toEqual([
         {
           id: 1,

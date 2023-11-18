@@ -23,5 +23,17 @@ const postSchema = z.object({
     .int(),
 });
 
+const bookingSchema = z.object({
+  username: z.string().min(1),
+  ticketsQuantity: z.number().int().positive(),
+  seats: z.array(
+    z.object({
+      row: z.string().length(1).toUpperCase(),
+      seat: z.number().min(1)
+    })
+  )
+});
+
 export const parsePutRecord = (record: unknown) => putSchema.parse(record);
 export const parsePostRecord = (record: unknown) => postSchema.parse(record);
+export const parseBookingRecord = (record: unknown) => bookingSchema.parse(record)

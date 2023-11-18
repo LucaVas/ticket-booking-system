@@ -105,8 +105,6 @@ describe('Screenings', () => {
     const screenings = await repository.getScreeningAndMovie();
     const bookingsNumber = await repository.getBookingsNumber(screenings[0].id);
 
-    console.log(bookingsNumber);
-
     expect(bookingsNumber).toBe(1);
   });
 

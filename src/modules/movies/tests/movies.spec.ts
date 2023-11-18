@@ -20,7 +20,7 @@ const app = createApp(db);
 describe('GET', () => {
   it('should return movies by a list of query params', async () => {
     const { body } = await supertest(app)
-      .get('/movies?id=133093,816692')
+      .get('/api/v1/movies?id=133093,816692')
       .expect(200);
 
     expect(body).toHaveLength(2);
@@ -39,13 +39,15 @@ describe('GET', () => {
   });
 
   it('should return a BadRequest error if query params are missing', async () => {
-    const { body } = await supertest(app).get('/movies').expect(400);
+    const { body } = await supertest(app).get('/api/v1/movies').expect(400);
 
     expect(body.error.message).toBe('Movies ids are required.');
   });
 
   it('should return a BadRequest error if id query params are not numbers', async () => {
-    const { body } = await supertest(app).get('/movies?id=one,two').expect(400);
+    const { body } = await supertest(app)
+      .get('/api/v1/movies?id=one,two')
+      .expect(400);
 
     expect(body.error.message).toBe(
       'Movies ids must be of numeric type.'
@@ -53,13 +55,15 @@ describe('GET', () => {
   });
 
   it('should return error message if movie is not found in the database', async () => {
-    const { body } = await supertest(app).get('/movies?id=1').expect(404);
+    const { body } = await supertest(app)
+      .get('/api/v1/movies?id=1')
+      .expect(404);
     expect(body.error.message).toBe('No movies can be found in the database');
   });
 
   it('should return movies that are found in the database', async () => {
     const { body } = await supertest(app)
-      .get('/movies?id=1,816692')
+      .get('/api/v1/movies?id=1,816692')
       .expect(200);
     expect(body).toHaveLength(1);
     expect(body).toEqual([

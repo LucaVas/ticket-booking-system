@@ -8,6 +8,7 @@ import {
 } from './types/types';
 import BadRequest from '@/utils/errors/BadRequest';
 import NotFound from '@/utils/errors/NotFound';
+import { BookingRowInsert, BookingRowSelect, NewBooking } from './types/types';
 
 export default (db: Database) => ({
   repository: buildRepository(db),
@@ -54,6 +55,34 @@ export default (db: Database) => ({
     screening: ScreeningRowInsert
   ): Promise<ScreeningRowSelect> {
     return this.repository.createScreening(screening);
+  },
+
+  async createBooking(
+    screeningId: number,
+    booking: NewBooking
+  ): Promise<BookingRowSelect[]> {
+
+    const screening = await this.repository.getScreeningById(screeningId);
+    if (!screening) {
+      throw new NotFound(`Screening with ID ${screeningId} not found.`);
+    }
+    const user = await this.repository.getUserByUsername(booking.username);
+    if (!user) {
+      throw new NotFound(`User with username ${booking.username} not found.`);
+    }
+
+    let bookingResponse: BookingRowSelect[] = [];
+
+    for (let ticket = 0; ticket < booking.ticketsQuantity; ticket++) {
+      const bookedTicket = await this.repository.createBooking(
+        screening.id,
+        user.id,
+        booking.seats[ticket]
+      );
+      bookingResponse.push(bookedTicket)
+    }
+
+    return bookingResponse
   },
 
   async addTicketsLeft(screening: ScreeningAndMovie) {

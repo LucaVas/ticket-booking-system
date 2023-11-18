@@ -1,4 +1,5 @@
 import { Screenings } from '@/database';
+import { Bookings } from '@/database/types';
 import { Insertable, Selectable, Updateable } from 'kysely';
 
 export type ScreeningRow = Screenings;
@@ -16,6 +17,19 @@ export interface ModifiedScreening {
   movieId: number | null;
   movieTitle: string | null;
   movieYear: number | null;
+}
+
+export type ScreeningAndMovie = Omit<ModifiedScreening, 'ticketsLeft'>;
+
+export type NewBookingSeatInformation = { row: string; seat: number };
+export type NewBooking = {
+  username: string;
+  ticketsQuantity: number;
+  seats: NewBookingSeatInformation[];
 };
 
-export type ScreeningAndMovie = Omit<ModifiedScreening, 'ticketsLeft'>
+export type BookingRow = Bookings;
+export type BookingRowWithoutId = Omit<BookingRow, 'id'>;
+export type BookingRowInsert = Insertable<BookingRowWithoutId>;
+export type BookingRowUpdate = Updateable<BookingRowWithoutId>;
+export type BookingRowSelect = Selectable<BookingRow>;

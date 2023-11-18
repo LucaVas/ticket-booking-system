@@ -28,7 +28,9 @@ afterAll(async () => {
 
 describe('GET', () => {
   it('should return a list of bookings for existing user', async () => {
-    const { body } = await supertest(app).get('/users/1/bookings').expect(200);
+    const { body } = await supertest(app)
+      .get('/api/v1/users/1/bookings')
+      .expect(200);
 
     const expected = {
       username: 'lucavassos',
@@ -76,7 +78,9 @@ describe('GET', () => {
   });
 
   it('should return an empty list of bookings if user has no tickets booked', async () => {
-    const { body } = await supertest(app).get('/users/2/bookings').expect(200);
+    const { body } = await supertest(app)
+      .get('/api/v1/users/2/bookings')
+      .expect(200);
 
     const expected = {
       username: 'ajanka',
@@ -88,29 +92,31 @@ describe('GET', () => {
 
   it('should return 400 if id is not numeric', async () => {
     const { body } = await supertest(app)
-      .get('/users/one/bookings')
+      .get('/api/v1/users/one/bookings')
       .expect(400);
 
     expect(body.error.message).toBe('Please provide a numeric user ID.');
   });
 
   it('should return 404 if user does not exist', async () => {
-    const { body } = await supertest(app).get('/users/4/bookings').expect(404);
+    const { body } = await supertest(app)
+      .get('/api/v1/users/4/bookings')
+      .expect(404);
 
     expect(body.error.message).toBe('User with id 4 does not exist.');
   });
 
   it('should return 404 if unsupported users routes are reached', async () => {
-    await supertest(app).post('/users/1').expect(405);
-    await supertest(app).patch('/users/1').expect(405);
-    await supertest(app).put('/users/1').expect(405);
-    await supertest(app).delete('/users/1').expect(405);
+    await supertest(app).post('/api/v1/users/1').expect(405);
+    await supertest(app).patch('/api/v1/users/1').expect(405);
+    await supertest(app).put('/api/v1/users/1').expect(405);
+    await supertest(app).delete('/api/v1/users/1').expect(405);
   });
 
   it('should return 404 if unsupported booking routes are reached', async () => {
-    await supertest(app).post('/users/1/bookings').expect(405);
-    await supertest(app).patch('/users/1/bookings').expect(405);
-    await supertest(app).put('/users/1/bookings').expect(405);
-    await supertest(app).delete('/users/1/bookings').expect(405);
+    await supertest(app).post('/api/v1/users/1/bookings').expect(405);
+    await supertest(app).patch('/api/v1/users/1/bookings').expect(405);
+    await supertest(app).put('/api/v1/users/1/bookings').expect(405);
+    await supertest(app).delete('/api/v1/users/1/bookings').expect(405);
   });
 });

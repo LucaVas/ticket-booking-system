@@ -1,12 +1,12 @@
 import type { Database } from '@/database';
+import { BookingRowSelect, NewBookingSeatInformation } from './types/types';
+import { UserRowSelect } from '../users/types/types';
 import {
   ScreeningRowSelect,
   ScreeningRowInsert,
-  ScreeningAndMovie,
 } from './types/types';
 
 export default (db: Database) => ({
-
   async getScreeningAndMovie() {
     return db
       .selectFrom('screenings')
@@ -23,6 +23,16 @@ export default (db: Database) => ({
       .execute();
   },
 
+  async getScreeningById(
+    screeningId: number
+  ): Promise<ScreeningRowSelect | undefined> {
+    return db
+      .selectFrom('screenings')
+      .where('id', '=', screeningId)
+      .selectAll()
+      .executeTakeFirst();
+  },
+
   async getBookingsNumber(screeningId: number) {
     const bookedNumObj = await db
       .selectFrom('bookings')
@@ -31,9 +41,9 @@ export default (db: Database) => ({
         fn.count<number>('bookings.screeningId').as('bookedTickets'),
       ])
       .where('bookings.screeningId', '=', screeningId)
-      .executeTakeFirst()
+      .executeTakeFirst();
 
-    return bookedNumObj?.bookedTickets
+    return bookedNumObj?.bookedTickets;
   },
 
   async deleteScreeningById(
@@ -73,5 +83,34 @@ export default (db: Database) => ({
       })
       .returningAll()
       .executeTakeFirstOrThrow();
+  },
+
+  async createBooking(
+    screeningId: number,
+    userId: number,
+    seatInformation: NewBookingSeatInformation
+  ): Promise<BookingRowSelect> {
+    const timestamp = new Date().toISOString();
+    return db
+      .insertInto('bookings')
+      .values({
+        screeningId,
+        userId,
+        row: seatInformation.row,
+        seat: seatInformation.seat,
+        bookedAt: timestamp,
+      })
+      .returningAll()
+      .executeTakeFirstOrThrow();
+  },
+
+  async getUserByUsername(
+    username: string
+  ): Promise<UserRowSelect | undefined> {
+    return db
+      .selectFrom('users')
+      .where('username', '=', username)
+      .selectAll()
+      .executeTakeFirst();
   },
 });

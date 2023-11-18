@@ -150,6 +150,26 @@ Request example:
   }
 
 ```
+Response example:
+
+```
+[
+  {
+    screeningId: 1,
+    userId: 1,
+    row: F,
+    seat: 7,
+    bookedAt: 2023-11-18T20:32:07.722Z
+  },
+  {
+    screeningId: 1,
+    userId: 1,
+    row: F,
+    seat: 8,
+    bookedAt: 2023-11-18T20:32:07.731Z
+  }
+]
+```
 
 ---
 

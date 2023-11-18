@@ -1,38 +1,47 @@
 import { Router } from 'express';
 import type { Database } from '@/database';
-import { jsonRoute } from '@/utils/middleware';
+import { jsonRoute, unsupportedRoute } from '@/utils/middleware';
 import buildService from './service';
-import { parsePostRecord, parsePutRecord } from './schema';
+import { parseBookingRecord, parsePostRecord, parsePutRecord } from './schema';
 import { StatusCodes } from 'http-status-codes';
 
 export default (db: Database) => {
   const service = buildService(db);
   const router = Router();
 
-  router.get(
-    '/',
-    jsonRoute(async () => {
-      const screeningsAndMovies = await service.getScreeningsAndMovies();
-      const modifiedScreenings = await Promise.all(
-        screeningsAndMovies.map(
-          async screening => await service.addTicketsLeft(screening)
-        )
-      );
-      return modifiedScreenings;
-    })
-  );
-
-  router.post(
-    '/',
-    jsonRoute(async req => {
-      const newScreening = parsePostRecord(req.body);
-      return service.createScreening(newScreening);
-    }, StatusCodes.CREATED)
-  );
+  router
+    .route('/')
+    .get(
+      jsonRoute(async () => {
+        const screeningsAndMovies = await service.getScreeningsAndMovies();
+        const modifiedScreenings = await Promise.all(
+          screeningsAndMovies.map(
+            async screening => await service.addTicketsLeft(screening)
+          )
+        );
+        return modifiedScreenings;
+      })
+    )
+    .post(
+      jsonRoute(async req => {
+        const newScreening = parsePostRecord(req.body);
+        return service.createScreening(newScreening);
+      }, StatusCodes.CREATED)
+    )
+    .put(unsupportedRoute)
+    .patch(unsupportedRoute)
+    .delete(unsupportedRoute);
 
   router
+    .route('/:id')
+    .post(
+      jsonRoute(async req => {
+        const screeningId = parseInt(req.params.id);
+        const booking = parseBookingRecord(req.body);
+        return service.createBooking(screeningId, booking);
+      }, StatusCodes.CREATED)
+    )
     .put(
-      '/:id',
       jsonRoute(async req => {
         const screeningId = parseInt(req.params.id);
         const { totalTickets } = parsePutRecord(req.body);
@@ -40,12 +49,13 @@ export default (db: Database) => {
       })
     )
     .delete(
-      '/:id',
       jsonRoute(async req => {
         const screeningId = parseInt(req.params.id);
         return service.deleteScreeningById(screeningId);
       })
-    );
+    )
+    .get(unsupportedRoute)
+    .patch(unsupportedRoute);
 
   return router;
 };
