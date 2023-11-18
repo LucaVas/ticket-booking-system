@@ -35,7 +35,8 @@ const addScreenings = (bookings: Booking[], tickets: Ticket[]): void => {
       bookings.push({
         screeningId: ticket.screeningId,
         movieTitle: ticket.movieTitle,
-        timestamp: ticket.timestamp,
+        date: ticket.date,
+        time: ticket.time,
         ticketsBooked: {
           totalNumber: 0,
           seats: [],

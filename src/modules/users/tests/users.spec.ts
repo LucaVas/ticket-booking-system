@@ -35,7 +35,8 @@ describe('GET', () => {
       bookings: [
         {
           screeningId: 1,
-          timestamp: '2023-11-01T21:15:00.000Z',
+          date: '2023-11-01',
+          time: '21:15',
           movieTitle: 'Inception',
           ticketsBooked: {
             totalNumber: 2,
@@ -55,7 +56,8 @@ describe('GET', () => {
         },
         {
           screeningId: 2,
-          timestamp: '2023-11-01T19:45:00.000Z',
+          date: '2023-11-01',
+          time: '19:45',
           movieTitle: 'Sherlock Holmes',
           ticketsBooked: {
             totalNumber: 1,

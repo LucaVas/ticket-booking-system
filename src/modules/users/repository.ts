@@ -12,7 +12,8 @@ export default (db: Database) => ({
       .select([
         'users.username',
         'screenings.id as screeningId',
-        'screenings.timestamp',
+        'screenings.date',
+        'screenings.time',
         'movies.title as movieTitle',
         'bookings.row',
         'bookings.seat',

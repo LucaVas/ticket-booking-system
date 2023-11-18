@@ -5,7 +5,8 @@ export async function up(db: Kysely<SqliteDatabase>) {
     .createTable('screenings')
     .ifNotExists()
     .addColumn('id', 'integer', c => c.primaryKey().autoIncrement().notNull())
-    .addColumn('timestamp', 'text', c => c.notNull())
+    .addColumn('date', 'text', c => c.notNull())
+    .addColumn('time', 'text', c => c.notNull())
     .addColumn('movie_id', 'integer', c =>
       c.references('movies.id').onDelete('cascade').notNull()
     )
