@@ -5,6 +5,7 @@ import {
   ScreeningRowInsert,
   ModifiedScreening,
   ScreeningAndMovie,
+  NewBookingSeatInformation,
 } from './types/types';
 import BadRequest from '@/utils/errors/BadRequest';
 import NotFound from '@/utils/errors/NotFound';
@@ -61,7 +62,6 @@ export default (db: Database) => ({
     screeningId: number,
     booking: NewBooking
   ): Promise<BookingRowSelect[]> {
-
     const screening = await this.repository.getScreeningById(screeningId);
     if (!screening) {
       throw new NotFound(`Screening with ID ${screeningId} not found.`);
@@ -74,15 +74,22 @@ export default (db: Database) => ({
     let bookingResponse: BookingRowSelect[] = [];
 
     for (let ticket = 0; ticket < booking.ticketsQuantity; ticket++) {
-      const bookedTicket = await this.repository.createBooking(
+      const isAvailable = await this.checkSeatAvailability(
         screening.id,
-        user.id,
         booking.seats[ticket]
       );
-      bookingResponse.push(bookedTicket)
+
+      if (isAvailable) {
+        const bookedTicket = await this.repository.createBooking(
+          screening.id,
+          user.id,
+          booking.seats[ticket]
+        );
+        bookingResponse.push(bookedTicket);
+      }
     }
 
-    return bookingResponse
+    return bookingResponse;
   },
 
   async addTicketsLeft(screening: ScreeningAndMovie) {
@@ -97,5 +104,22 @@ export default (db: Database) => ({
       (screening as ModifiedScreening).ticketsLeft = null;
     }
     return screening;
+  },
+
+  async checkSeatAvailability(
+    screeningId: number,
+    seat: NewBookingSeatInformation
+  ): Promise<boolean> {
+    const ticketsAlreadyPurchased =
+      await this.repository.getTicketsByScreening(screeningId);
+    if (!ticketsAlreadyPurchased) return true;
+
+    ticketsAlreadyPurchased.forEach(ticket => {
+      if (seat.row === ticket.row && seat.seat === ticket.seat) {
+        return false;
+      }
+    });
+
+    return true;
   },
 });

@@ -1,6 +1,6 @@
 import type { Database } from '@/database';
 import { BookingRowSelect, NewBookingSeatInformation } from './types/types';
-import { UserRowSelect } from '../users/types/types';
+import { UserRowSelect, Ticket } from '../users/types/types';
 import {
   ScreeningRowSelect,
   ScreeningRowInsert,
@@ -112,5 +112,25 @@ export default (db: Database) => ({
       .where('username', '=', username)
       .selectAll()
       .executeTakeFirst();
+  },
+
+  async getTicketsByScreening(screeningId: number): Promise<Ticket[]> {
+    return db
+      .selectFrom('bookings')
+      .innerJoin('users', 'users.id', 'bookings.userId')
+      .innerJoin('screenings', 'screenings.id', 'bookings.screeningId')
+      .innerJoin('movies', 'movies.id', 'screenings.movieId')
+      .where('screenings.id', '=', screeningId)
+      .select([
+        'users.username',
+        'screenings.id as screeningId',
+        'screenings.date',
+        'screenings.time',
+        'movies.title as movieTitle',
+        'bookings.row',
+        'bookings.seat',
+        'bookings.bookedAt',
+      ])
+      .execute();
   },
 });
