@@ -12,10 +12,6 @@ import NotFound from '@/utils/errors/NotFound';
 export default (db: Database) => ({
   repository: buildRepository(db),
 
-  async findAll(limit = 10, offset = 0) {
-    return this.repository.findAll(limit, offset);
-  },
-
   async getScreeningsAndMovies() {
     return this.repository.getScreeningAndMovie();
   },
