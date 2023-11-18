@@ -31,7 +31,8 @@ describe('Screenings', () => {
     const screeningTest = [
       {
         id: 1,
-        timestamp: '2023-11-01T21:15:00.0000Z',
+        date: '2023-11-01',
+        time: '21:15',
         movieId: 816692,
         totalTickets: null,
         createdAt: timestamp,
@@ -48,7 +49,8 @@ describe('Screenings', () => {
     expect(screenings).toEqual([
       {
         id: 1,
-        timestamp: '2023-11-01T21:15:00.0000Z',
+        date: '2023-11-01',
+        time: '21:15',
         totalTickets: null,
         movieId: 816692,
         movieTitle: 'Interstellar',
@@ -71,7 +73,8 @@ describe('Screenings', () => {
     const screeningTest = [
       {
         id: 1,
-        timestamp: '2023-11-01T21:15:00.0000Z',
+        date: '2023-11-01',
+        time: '21:15',
         movieId: 816692,
         totalTickets: null,
         createdAt: timestamp,
@@ -83,7 +86,8 @@ describe('Screenings', () => {
       {
         screeningId: 1,
         userId: 1,
-        seat: 'F4',
+        row: 'F',
+        seat: 4,
         bookedAt: '2023-11-01T21:15:00.0000Z',
       },
     ];
@@ -119,7 +123,8 @@ describe('Screenings', () => {
 
     const screeningTest = {
       id: 1,
-      timestamp: '2023-11-01T21:15:00.0000Z',
+      date: '2023-11-01',
+      time: '21:15',
       movieId: 816692,
       totalTickets: null,
       createdAt: timestamp,
@@ -147,7 +152,8 @@ describe('Screenings', () => {
 
     const screeningTest = {
       id: 1,
-      timestamp: '2023-11-01T21:15:00.0000Z',
+      date: '2023-11-01',
+      time: '21:15',
       movieId: 816692,
       totalTickets: null,
       createdAt: timestamp,
@@ -175,7 +181,8 @@ describe('Screenings', () => {
 
     const screeningTest = {
       id: 1,
-      timestamp: '2023-11-01T21:15:00.0000Z',
+      date: '2023-11-01',
+      time: '21:15',
       movieId: 816692,
       totalTickets: null,
       createdAt: timestamp,
@@ -206,7 +213,8 @@ describe('Screenings', () => {
 
     const screeningTest = {
       id: 1,
-      timestamp: '2023-11-01T21:15:00.0000Z',
+      date: '2023-11-01',
+      time: '21:15',
       movieId: 816692,
       totalTickets: null,
       createdAt: timestamp,

@@ -9,7 +9,8 @@ export type ScreeningRowSelect = Selectable<ScreeningRow>;
 
 export interface ModifiedScreening {
   id: number;
-  timestamp: string | null;
+  date: string | null;
+  time: string | null;
   totalTickets: number | null;
   ticketsLeft: number | null;
   movieId: number | null;

@@ -3,14 +3,16 @@ const timestamp = new Date().toISOString()
 export default [
   {
     id: 1,
-    timestamp: '2023-11-01T21:15:00.000Z',
+    date: '2023-11-01',
+    time: '21:15',
     movieId: 4153,
     createdAt: timestamp,
     updatedAt: timestamp,
   },
   {
     id: 2,
-    timestamp: '2023-11-01T19:45:00.000Z',
+    date: '2023-11-01',
+    time: '19:45',
     movieId: 234,
     createdAt: timestamp,
     updatedAt: timestamp,

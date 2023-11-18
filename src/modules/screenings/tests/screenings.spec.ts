@@ -27,7 +27,8 @@ describe('/screenings/:id', () => {
       ];
       const timestamp = new Date().toISOString();
       const screeningTest = {
-        timestamp: '2023-11-01T21:15:00.0000Z',
+        date: '2023-11-01',
+        time: '21:15',
         movieId: 816692,
         totalTickets: null,
         createdAt: timestamp,
@@ -40,7 +41,7 @@ describe('/screenings/:id', () => {
       const { body } = await supertest(app).delete('/screenings/1').expect(200);
 
       expect(body.movieId).toEqual(816692);
-      expect(body.timestamp).toEqual('2023-11-01T21:15:00.0000Z');
+      expect(body.time).toEqual('21:15');
     });
 
     it('should return 404 if screening to delete is not found', async () => {
@@ -74,7 +75,8 @@ describe('/screenings/:id', () => {
       ];
       const screeningTest = {
         id: 1,
-        timestamp: '2023-11-01T21:15:00.0000Z',
+        date: '2023-11-01',
+        time: '21:15',
         movieId: 816692,
         totalTickets: 100,
         createdAt: timestamp,
@@ -107,7 +109,8 @@ describe('/screenings/:id', () => {
       ];
       const screeningTest = {
         id: 1,
-        timestamp: '2023-11-01T21:15:00.0000Z',
+        date: '2023-11-01',
+        time: '21:15',
         movieId: 816692,
         totalTickets: null,
         createdAt: timestamp,
@@ -140,7 +143,8 @@ describe('/screenings/:id', () => {
       ];
       const screeningTest = {
         id: 1,
-        timestamp: '2023-11-01T21:15:00.0000Z',
+        date: '2023-11-01',
+        time: '21:15',
         movieId: 816692,
         totalTickets: 100,
         createdAt: timestamp,
@@ -174,7 +178,8 @@ describe('/screenings/:id', () => {
       ];
       const screeningTest = {
         id: 1,
-        timestamp: '2023-11-01T21:15:00.0000Z',
+        date: '2023-11-01',
+        time: '21:15',
         movieId: 816692,
         totalTickets: 100,
         createdAt: timestamp,
@@ -220,8 +225,10 @@ describe('/screenings', () => {
           year: 2014,
         },
       ];
+
       const screeningTest = {
-        timestamp: '2023-11-01T21:15:00.0000Z',
+        date: '2023-11-01',
+        time: '21:15',
         movieId: 816692,
         totalTickets: 107,
       };
@@ -270,7 +277,8 @@ describe('/screenings', () => {
       ];
       const screeningTest = {
         id: 1,
-        timestamp: '2023-11-01 21:15:00',
+        date: '2023-11-01',
+        time: '24:15',
         movieId: 816692,
         totalTickets: 100,
       };
@@ -283,7 +291,7 @@ describe('/screenings', () => {
         .expect(400);
 
       expect(body.error.issues[0].message).toBe(
-        'Timestamp format is incorrect, should be yyyy-MM-ddThh:mm:SS.ssssZ'
+        'Time format is incorrect, required: hh:MM'
       );
     });
   });
@@ -301,7 +309,8 @@ describe('/screenings', () => {
       const screeningTest = [
         {
           id: 1,
-          timestamp: timestamp,
+          date: '2023-11-01',
+          time: '21:15',
           movieId: 816692,
           createdAt: timestamp,
           updatedAt: timestamp,
@@ -316,7 +325,8 @@ describe('/screenings', () => {
       expect(body).toEqual([
         {
           id: 1,
-          timestamp: timestamp,
+          date: '2023-11-01',
+          time: '21:15',
           totalTickets: null,
           ticketsLeft: null,
           movieId: 816692,

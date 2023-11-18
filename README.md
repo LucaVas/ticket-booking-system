@@ -82,7 +82,8 @@ Response example:
   [
     {
       id: 1,
-      timestamp: '2023-11-06T21:15:00.0000Z',
+      date: '2023-11-06',
+      time: '21:15',
       totalTickets: 100,
       ticketsLeft: 27
       movieId: 133093,
@@ -91,7 +92,8 @@ Response example:
     },
     {
       id: 2,
-      timestamp: '2023-11-06T19:30:00.0000Z',
+      date: '2023-11-06',
+      time: '19:20',,
       totalTickets: 100,
       ticketsLeft: 15
       movieId: 22,
@@ -193,7 +195,8 @@ Response example:
     bookings: [
       {
         id: 1,
-        timestamp: '2023-11-06T21:15:00.0000Z',
+        date: '2023-11-06',
+        time: '21:15',
         movieTitle: 'Pirate of Caribbean',
         ticketsBooked:
           {
@@ -226,8 +229,8 @@ Response example:
 
 `screening`
 
-| id  | timestamp | movie_id | total_tickets | created_at | updated_at |
-| --- | --------- | -------- | ------------- | ---------- | ---------- |
+| id  | date | time | movie_id | total_tickets | created_at | updated_at |
+| --- | ---- | ---- | -------- | ------------- | ---------- | ---------- |
 
 `booking`
 

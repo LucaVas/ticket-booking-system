@@ -13,7 +13,8 @@ export default (db: Database) => ({
       .leftJoin('movies', 'movies.id', 'screenings.movieId')
       .select([
         'screenings.id as id',
-        'timestamp',
+        'date',
+        'time',
         'totalTickets',
         'movies.id as movieId',
         'title as movieTitle',
