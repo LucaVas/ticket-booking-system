@@ -8,6 +8,7 @@ const app = createApp(db);
 const createScreenings = createFor(db, 'screenings');
 const createMovies = createFor(db, 'movies');
 const createUsers = createFor(db, 'users');
+const createBookings = createFor(db, 'bookings');
 
 afterAll(() => db.destroy());
 
@@ -15,6 +16,7 @@ afterEach(async () => {
   await db.deleteFrom('movies').execute();
   await db.deleteFrom('screenings').execute();
   await db.deleteFrom('users').execute();
+  await db.deleteFrom('bookings').execute();
 });
 
 describe('/screenings/:id', () => {
@@ -441,6 +443,64 @@ describe('/screenings', () => {
         .expect(404);
 
       expect(body.error.message).toBe('Screening with ID 2 not found.');
+    });
+
+    it('should throw error if seats are occupied', async () => {
+      const movieTest = [
+        {
+          id: 816692,
+          title: 'Interstellar',
+          year: 2014,
+        },
+      ];
+
+      const screeningTest = {
+        id: 5,
+        date: '2023-11-01',
+        time: '21:15',
+        movieId: 816692,
+        totalTickets: 107,
+      };
+
+      const userTest = {
+        id: 5,
+        username: 'zygimantas',
+      };
+
+      const bookingTest = {
+        screeningId: 5,
+        userId: 5,
+        row: 'A',
+        seat: 1,
+        bookedAt: new Date().toISOString(),
+      };
+
+      const newBooking = {
+        username: 'zygimantas',
+        ticketsQuantity: 2,
+        seats: [
+          {
+            row: 'A',
+            seat: 1,
+          },
+          {
+            row: 'F',
+            seat: 8,
+          },
+        ],
+      };
+
+      await createMovies(movieTest);
+      await createScreenings(screeningTest);
+      await createUsers(userTest);
+      await createBookings(bookingTest);
+
+      const { body } = await supertest(app)
+        .post('/api/v1/screenings/5')
+        .send(newBooking)
+        .expect(400);
+
+      expect(body.error.message).toBe('One or more seats are not available: A1');
     });
   });
 

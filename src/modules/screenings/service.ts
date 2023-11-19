@@ -9,7 +9,7 @@ import {
 } from './types/types';
 import BadRequest from '@/utils/errors/BadRequest';
 import NotFound from '@/utils/errors/NotFound';
-import { BookingRowInsert, BookingRowSelect, NewBooking } from './types/types';
+import { BookingRowSelect, NewBooking } from './types/types';
 
 export default (db: Database) => ({
   repository: buildRepository(db),
@@ -74,19 +74,14 @@ export default (db: Database) => ({
     let bookingResponse: BookingRowSelect[] = [];
 
     for (let ticket = 0; ticket < booking.ticketsQuantity; ticket++) {
-      const isAvailable = await this.checkSeatAvailability(
+      await this.checkSeatAvailability(screening.id, booking.seats[ticket]);
+
+      const bookedTicket = await this.repository.createBooking(
         screening.id,
+        user.id,
         booking.seats[ticket]
       );
-
-      if (isAvailable) {
-        const bookedTicket = await this.repository.createBooking(
-          screening.id,
-          user.id,
-          booking.seats[ticket]
-        );
-        bookingResponse.push(bookedTicket);
-      }
+      bookingResponse.push(bookedTicket);
     }
 
     return bookingResponse;
@@ -109,17 +104,17 @@ export default (db: Database) => ({
   async checkSeatAvailability(
     screeningId: number,
     seat: NewBookingSeatInformation
-  ): Promise<boolean> {
+  ): Promise<void> {
     const ticketsAlreadyPurchased =
       await this.repository.getTicketsByScreening(screeningId);
-    if (!ticketsAlreadyPurchased) return true;
+    if (!ticketsAlreadyPurchased) return;
 
     ticketsAlreadyPurchased.forEach(ticket => {
-      if (seat.row === ticket.row && seat.seat === ticket.seat) {
-        return false;
+      if (JSON.stringify(ticket) === JSON.stringify(seat)) {
+        throw new BadRequest(
+          `One or more seats are not available: ${ticket.row}${ticket.seat}`
+        );
       }
     });
-
-    return true;
   },
 });

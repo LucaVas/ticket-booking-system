@@ -114,22 +114,14 @@ export default (db: Database) => ({
       .executeTakeFirst();
   },
 
-  async getTicketsByScreening(screeningId: number): Promise<Ticket[]> {
+  async getTicketsByScreening(screeningId: number): Promise<NewBookingSeatInformation[]> {
     return db
       .selectFrom('bookings')
-      .innerJoin('users', 'users.id', 'bookings.userId')
       .innerJoin('screenings', 'screenings.id', 'bookings.screeningId')
-      .innerJoin('movies', 'movies.id', 'screenings.movieId')
       .where('screenings.id', '=', screeningId)
       .select([
-        'users.username',
-        'screenings.id as screeningId',
-        'screenings.date',
-        'screenings.time',
-        'movies.title as movieTitle',
         'bookings.row',
         'bookings.seat',
-        'bookings.bookedAt',
       ])
       .execute();
   },
