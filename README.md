@@ -299,6 +299,7 @@ npm run generate-types
 ## Authors
 
 - [@LucaVas](https://github.com/LucaVas)
+- [@AkvileJank](https://github.com/AkvileJank)
 
 ## Acknowledgements
 
